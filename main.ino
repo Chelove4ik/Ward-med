@@ -5,15 +5,17 @@ void sendData()
 {                                                                                        
   Serial.write("A0");                                                                                                          
   val = analogRead(A0);                                                              
-  Serial.write(map(val, 0, 1023, 0, 255));
-  if (val= 
+  //Serial.write(map(val, 0, 1023, 0, 255));
+  //if (val= 
                                             
 }
 void setup() {            
   Serial.begin(9600);                     
   Timer1.initialize(3000);                  
   Timer1.attachInterrupt(sendData);         
-}
+} 
 void loop() 
 {
+  Serial.println(1);
+  delay(1000);
 }
