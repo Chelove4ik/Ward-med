@@ -1,11 +1,10 @@
 #include <TimerOne.h> 
 
 int val = 0;
-char port[2] = "A2";
 int speed = 9600;
 
 void sendData(){                                              
-  val = analogRead(port);                     
+  val = analogRead(A2);                     
   Serial.println(val);
 }
 
