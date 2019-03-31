@@ -2,6 +2,7 @@
 
 int val = 0;
 char port[2] = "A2";
+int speed = 9600;
 
 void sendData(){                                              
   val = analogRead(port);                     
@@ -9,7 +10,7 @@ void sendData(){
 }
 
 void setup() {
-  Serial.begin(9600);                     
+  Serial.begin(speed);                     
   Timer1.initialize(3000);                  
   Timer1.attachInterrupt(sendData);     
 }
