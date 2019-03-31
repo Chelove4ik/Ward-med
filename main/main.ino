@@ -1,8 +1,8 @@
 #include <TimerOne.h>                                                                                                  
 int val = 0;
 int i=0;
-T1=0;
-T2=0;                                
+//T1=0;
+//T2=0;                                
 void sendData() 
 {                                                                                        
   Serial.write("A0");                                                                                                          
@@ -20,6 +20,8 @@ void setup() {
   Timer1.initialize(3000);                  
   Timer1.attachInterrupt(sendData);         
 }
+
+
 void loop() 
 {
 }
