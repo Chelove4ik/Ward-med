@@ -34,6 +34,8 @@ void setup() {
   Timer1.initialize(3000);                  
   Timer1.attachInterrupt(sendData);         
 }
+
+
 void loop() 
 {
 }
