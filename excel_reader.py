@@ -1,5 +1,3 @@
-from pprint import pprint
-
 from openpyxl import load_workbook
 
 wb = load_workbook('files/Patient.xlsx')

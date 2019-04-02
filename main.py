@@ -7,22 +7,31 @@ from time import clock as clck
 a = clck()
 b = clck()
 c = clck()
+music_time = clck()
 
 num_br, num_bez = int(input()), int(input())
 
 bracelet = serial.Serial(f'COM{num_br}')
 bezel = serial.Serial(f'COM{num_bez}')
 
+lst_BPM = []
+lst_GSR = []
+lst_EEG = []
+
 if not bracelet.isOpen():
     bracelet.open()
 if not bezel.isOpen():
     bezel.open()
 
+music = False
 running = True
 pygame.init()
+pygame.mixer.init()
 
 size = width, height = 1200, 630
 black = pygame.Color('black')
+
+warning = pygame.mixer.Sound(r'files\warning.wav')
 
 myfont = pygame.font.SysFont('comicsansms', 23)  # Impact
 
@@ -88,18 +97,43 @@ while running:
     screen.blit(eeg, (645, 17))
 
     val = bracelet.readline().decode('cp1251').split('\r\n')[0].split()
-    val_b = bezel.readline().decode('cp1251').split('\r\n')[0].split()
-    # print(val)
-
+    # val_b = bezel.readline().decode('cp1251').split('\r\n')[0].split()
+    print(val)
+    val_b=[3,3]
+    # bracelet.flush()
+    # bezel.flush()
     if clck() - a >= 5 and val[0] == 'BPM':
         BPM = myfont.render(val[1], 1, black)
         a = clck()
+        lst_BPM.append(int(val[1]))
+        if sum(lst_BPM) / len(lst_BPM) - int(val[1]) > 50:
+            music = True
+        if len(lst_BPM) == 3:
+            lst_BPM = lst_BPM[1::]
+
     if clck() - b >= 5 and val[0] == 'GSR':
         GSR = myfont.render(val[1], 1, black)
         b = clck()
+        lst_GSR.append(int(val[1]))
+        if sum(lst_GSR) / len(lst_GSR) - int(val[1]) > 50:
+            music = True
+        if len(lst_GSR) == 3:
+            lst_GSR = lst_GSR[1::]
+
     if clck() - c >= 5 and val_b[0] == 'EEG':
         EEG = myfont.render(val_b[1], 1, black)
         c = clck()
+        lst_EEG.append(int(val[1]))
+        if sum(lst_EEG) / len(lst_EEG) - int(val[1]) > 50:
+            music = True
+        if len(lst_EEG) == 3:
+            lst_EEG = lst_EEG[1::]
+
+    if music:
+        if clck() - music_time > 60:
+            music_time = clck()
+            warning.play(1)
+            music = False
 
     screen.blit(BPM, (410, 70 + 17))
     screen.blit(GSR, (530, 70 + 17))
