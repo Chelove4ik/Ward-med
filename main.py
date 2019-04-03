@@ -9,14 +9,23 @@ b = clck()
 c = clck()
 music_time = clck()
 
-num_br, num_bez = int(input()), int(input())
+try:
+    with open('files/input.txt') as file:
+        num_br = int(file.readline())
+        num_bez = int(file.readline())
+except Exception:
+    num_br, num_bez = int(input()), int(input())
+try:
+    bracelet = serial.Serial(f'COM{num_br}')
+    bezel = serial.Serial(f'COM{num_bez}')
+except Exception as ex:
+    print(ex)
+    num = 10000000
+    while num > 0:
+        num -= 1
+    exit(0)
 
-bracelet = serial.Serial(f'COM{num_br}')
-bezel = serial.Serial(f'COM{num_bez}')
-
-lst_BPM = []
 lst_GSR = []
-lst_EEG = []
 
 if not bracelet.isOpen():
     bracelet.open()
@@ -39,6 +48,8 @@ pulse = myfont.render('Пульс', 1, pygame.Color('black'))
 kgr = myfont.render('КГР', 1, pygame.Color('black'))
 eeg = myfont.render('ЭЭГ', 1, pygame.Color('black'))
 
+val = [None, None]
+val_b = [None, None]
 BPM = myfont.render(None, 1, black)
 GSR = myfont.render(None, 1, black)
 EEG = myfont.render(None, 1, black)
@@ -96,41 +107,41 @@ while running:
     screen.blit(kgr, (530, 17))
     screen.blit(eeg, (645, 17))
 
-    val = bracelet.readline().decode('cp1251').split('\r\n')[0].split()
-    # val_b = bezel.readline().decode('cp1251').split('\r\n')[0].split()
-    print(val)
-    val_b=[3,3]
+    if bracelet.inWaiting() != 0:
+        val = bracelet.readline().decode('cp1251').split('\r\n')[0].split()
+        print(val)
+    if bezel.inWaiting() != 0:
+        val_b = bezel.readline().decode('cp1251').split('\r\n')[0].split()
+        print(val_b)
+
+    val_b = [3, 3]
     # bracelet.flush()
     # bezel.flush()
     if clck() - a >= 5 and val[0] == 'BPM':
         BPM = myfont.render(val[1], 1, black)
         a = clck()
-        lst_BPM.append(int(val[1]))
-        if sum(lst_BPM) / len(lst_BPM) - int(val[1]) > 50:
+        if int(val[1]) > 130 or int(val[1]) < 45:
             music = True
-        if len(lst_BPM) == 3:
-            lst_BPM = lst_BPM[1::]
 
     if clck() - b >= 5 and val[0] == 'GSR':
         GSR = myfont.render(val[1], 1, black)
         b = clck()
         lst_GSR.append(int(val[1]))
-        if sum(lst_GSR) / len(lst_GSR) - int(val[1]) > 50:
+        if lst_GSR[0] - int(val[1]) > 50:
             music = True
-        if len(lst_GSR) == 3:
+        if len(lst_GSR) == 2:
             lst_GSR = lst_GSR[1::]
 
     if clck() - c >= 5 and val_b[0] == 'EEG':
-        EEG = myfont.render(val_b[1], 1, black)
+        if int(val_b[1]) <= 11:
+            EEG = myfont.render('B', 1, black)
         c = clck()
-        lst_EEG.append(int(val[1]))
-        if sum(lst_EEG) / len(lst_EEG) - int(val[1]) > 50:
+        if int(val_b[1]) > 11:
             music = True
-        if len(lst_EEG) == 3:
-            lst_EEG = lst_EEG[1::]
+            EEG = myfont.render('A', 1, black)
 
     if music:
-        if clck() - music_time > 60:
+        if clck() - music_time > 10:
             music_time = clck()
             warning.play(1)
             music = False
