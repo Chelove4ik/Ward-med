@@ -14,6 +14,7 @@ void sendData()
   if (i==256) 
   {
     for (int k=0;k<256;k++)
+    {
      data[k]=data[k]- sum/num;
     }
     i=0;
