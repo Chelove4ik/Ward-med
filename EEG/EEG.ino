@@ -1,4 +1,4 @@
-#include <fft.h> 
+а#include <fft.h> 
 #include <TimerOne.h>                      
 #define num 256                        // зададим число оцифрованных значений сигнала ЭЭГ, которое будет отправлено в функцию для разложения в спектр
 int8_t result[num], data[num];             // массивы для накопления данных
@@ -34,7 +34,9 @@ void sendData()
   {
      alpha+=sqrt(data[i]*data[i]+result[i]*result[i]);
      alpha=0.3*alpha+0.7*alpha_old;
-  }  
+  }
+  Serial.print("EEG ");
+  Serial.println(alpha);  
 }
 
 void setup() 
