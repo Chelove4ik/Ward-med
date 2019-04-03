@@ -14,7 +14,7 @@ void sendData() {
 
   if (val < valold && flag){
     flag = false;
-    pulses ++;
+    pulses++;
     if (pulses == 1){
       T = millis();
       delay(3000);
