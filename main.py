@@ -13,17 +13,13 @@ try:
     with open('files/input.txt') as file:
         num_br = int(file.readline())
         num_bez = int(file.readline())
-except Exception:
-    num_br, num_bez = int(input()), int(input())
-try:
-    bracelet = serial.Serial(f'COM{num_br}')
-    bezel = serial.Serial(f'COM{num_bez}')
 except Exception as ex:
     print(ex)
-    num = 10000000
-    while num > 0:
-        num -= 1
-    exit(0)
+    num_br, num_bez = int(input()), int(input())
+
+bracelet = serial.Serial(f'COM{num_br}')
+bezel = serial.Serial(f'COM{num_bez}')
+
 
 lst_GSR = []
 
@@ -113,33 +109,39 @@ while running:
     if bezel.inWaiting() != 0:
         val_b = bezel.readline().decode('cp1251').split('\r\n')[0].split()
         print(val_b)
-
-    val_b = [3, 3]
     # bracelet.flush()
     # bezel.flush()
-    if clck() - a >= 5 and val[0] == 'BPM':
-        BPM = myfont.render(val[1], 1, black)
-        a = clck()
-        if int(val[1]) > 130 or int(val[1]) < 45:
-            music = True
+    try:
+        if clck() - a >= 5 and val[0] == 'BPM':
+            BPM = myfont.render(val[1], 1, black)
+            a = clck()
+            if int(val[1]) > 130 or int(val[1]) < 45:
+                music = True
+    except Exception as ex:
+        print(ex)
 
-    if clck() - b >= 5 and val[0] == 'GSR':
-        GSR = myfont.render(val[1], 1, black)
-        b = clck()
-        lst_GSR.append(int(val[1]))
-        if lst_GSR[0] - int(val[1]) > 50:
-            music = True
-        if len(lst_GSR) == 2:
-            lst_GSR = lst_GSR[1::]
+    try:
+        if clck() - b >= 5 and val[0] == 'GSR':
+            GSR = myfont.render(val[1], 1, black)
+            b = clck()
+            lst_GSR.append(int(val[1]))
+            if lst_GSR[0] - int(val[1]) > 50:
+                music = True
+            if len(lst_GSR) == 2:
+                lst_GSR = lst_GSR[1::]
+    except Exception as ex:
+        print(ex)
 
-    if clck() - c >= 5 and val_b[0] == 'EEG':
-        if int(val_b[1]) <= 11:
-            EEG = myfont.render('B', 1, black)
-        c = clck()
-        if int(val_b[1]) > 11:
-            music = True
-            EEG = myfont.render('A', 1, black)
-
+    try:
+        if clck() - c >= 5 and val_b[0] == 'EEG':
+            if float(val_b[1]) <= 11:
+                EEG = myfont.render('β', 1, black)
+            c = clck()
+            if float(val_b[1]) > 11:
+                music = True
+                EEG = myfont.render('α', 1, black)
+    except Exception as ex:
+        print(ex)
     if music:
         if clck() - music_time > 10:
             music_time = clck()
