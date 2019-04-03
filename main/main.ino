@@ -36,12 +36,13 @@ void sendPulse(){
     }
     else
     {
-        if ((abs((sum_pulse / 7.0) - oldpulse) < 25) && (sum_pulse / 7.0 < 150) && (sum_pulse / 7.0 > 0))
+       double ans = sum_pulse/7.0;
+       if ((ans < 150) && (ans > 25))
       {
             Serial.print("BPM ");
-            Serial.println(int(sum_pulse / 7.0));
+            Serial.println(int(ans));
       }
-      oldpulse = sum_pulse / 7.0;
+      oldpulse = int(ans);
       sum_pulse = 0;
       i = 0;
     }

@@ -44,7 +44,6 @@ void sendData() {
 
 
 void setup() {
-  pinMode(pin, OUTPUT);
   while(!Serial);
   Serial.begin(9600);                    
  
