@@ -20,7 +20,6 @@ except Exception as ex:
 bracelet = serial.Serial(f'COM{num_br}')
 bezel = serial.Serial(f'COM{num_bez}')
 
-
 lst_GSR = []
 
 if not bracelet.isOpen():
@@ -35,6 +34,7 @@ pygame.mixer.init()
 
 size = width, height = 1200, 630
 black = pygame.Color('black')
+red = pygame.Color('red')
 
 warning = pygame.mixer.Sound(r'files\warning.wav')
 
@@ -117,6 +117,7 @@ while running:
             a = clck()
             if int(val[1]) > 130 or int(val[1]) < 45:
                 music = True
+                BPM = myfont.render(val[1], 1, red)
     except Exception as ex:
         print(ex)
 
@@ -127,6 +128,7 @@ while running:
             lst_GSR.append(int(val[1]))
             if lst_GSR[0] - int(val[1]) > 50:
                 music = True
+                GSR = myfont.render(val[1], 1, red)
             if len(lst_GSR) == 2:
                 lst_GSR = lst_GSR[1::]
     except Exception as ex:
@@ -134,12 +136,12 @@ while running:
 
     try:
         if clck() - c >= 5 and val_b[0] == 'EEG':
-            if float(val_b[1]) <= 11:
+            if float(val_b[1]) >= 15:
                 EEG = myfont.render('β', 1, black)
             c = clck()
-            if float(val_b[1]) > 11:
+            if float(val_b[1]) < 15:
                 music = True
-                EEG = myfont.render('α', 1, black)
+                EEG = myfont.render('α', 1, red)
     except Exception as ex:
         print(ex)
     if music:
@@ -153,6 +155,8 @@ while running:
     screen.blit(EEG, (645, 70 + 17))
 
     # bracelet.readline().decode('utf-8').split('\r\n')[0]
+    bracelet.flush()
+    bezel.flush()
 
     pygame.display.flip()
     clock.tick(fps)
